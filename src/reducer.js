@@ -1,3 +1,5 @@
+import { combineReducers } from 'redux'
+
 export const playlistByState = "playlistByState"
 export const playlistByArtist = "playlistByArtist"
 export const playlistByGenre = "playlistByGenre"
@@ -61,10 +63,18 @@ export function reducerCombined(state = initalStateRequest, action){
  * Fragmented
  * -------------------------
  */
+export const reducerFragmented  = combineReducers({
+      reducerPlaylistArtist,
+      reducerPlaylistCity,
+      reducerPlaylistGenre,
+      reducerPlaylistState
+})
+
 export function reducerPlaylistState(state = [], action){
     switch(action.type){
         case receiveState:
-            return [...state, ...action.data]
+            let customState = [...state, ...action.data]
+            return customState
         // remove, muda posição, entre outros...
         default:
             return state

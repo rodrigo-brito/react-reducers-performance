@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import { createStore, combineReducers } from 'redux'
+import { createStore } from 'redux'
 import { 
   receive,
 
   reducerCombined,
-  reducerPlaylistArtist,
-  reducerPlaylistCity,
-  reducerPlaylistGenre,
-  reducerPlaylistState,
+  reducerFragmented,
 
   playlistByArtist,
   playlistByCity,
@@ -22,53 +19,48 @@ import {
 }  from './reducer'
 import './App.css';
 
-const DATA_SIZE = 10000
+const DATA_SIZE = 100000
 
 export default class App extends Component {
   constructor(props){
     super(props)
     this.storeCombined = createStore(reducerCombined)
-    this.storeFragmented = createStore(combineReducers({
-      reducerPlaylistArtist,
-      reducerPlaylistCity,
-      reducerPlaylistGenre,
-      reducerPlaylistState
-    }))
+    this.storeFragmented = createStore(reducerFragmented)
 
     this.state = {time: 0}
 
     this.handleCombined = this.handleCombined.bind(this)
     this.handleFragmented = this.handleFragmented.bind(this)
     this.getData = this.getData.bind(this)
-    console.log(this.getData(10))
   }
   handleCombined() {
     console.time('combined');
     let data = this.getData(DATA_SIZE)
-    this.storeFragmented.dispatch({
+    this.storeCombined.dispatch({
       data: data.playlistByArtist,
       type: receive,
       requestType: playlistByArtist
     })
 
-    this.storeFragmented.dispatch({
+    this.storeCombined.dispatch({
       data: data.playlistByCity,
       type: receive,
       requestType: playlistByCity
     })
 
-    this.storeFragmented.dispatch({
+    this.storeCombined.dispatch({
       data: data.playlistByGenre,
       type: receive,
       requestType: playlistByGenre
     })
 
-    this.storeFragmented.dispatch({
+    this.storeCombined.dispatch({
       data: data.playlistByState,
       type: receive,
       requestType: playlistByState
     })
     console.timeEnd('combined');
+    console.log(this.storeCombined.getState())
   }
   handleFragmented() {
     console.time('fragmented');
@@ -93,6 +85,7 @@ export default class App extends Component {
       type: receiveState
     })
     console.timeEnd('fragmented');
+    console.log(this.storeFragmented.getState())
   }
 
   render() {
