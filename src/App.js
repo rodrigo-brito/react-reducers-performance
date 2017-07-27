@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import { createStore } from 'redux'
-import { 
+import {
   receive,
 
   reducerCombined,
@@ -11,7 +11,7 @@ import {
   playlistByCity,
   playlistByGenre,
   playlistByState,
-  
+
   receiveState,
   receiveArtist,
   receiveGenre,
@@ -96,7 +96,7 @@ export default class App extends Component {
           <h2>React Performance Test</h2>
         </div>
         <p className="App-intro">
-          Please, open the console and click in the buttons.          
+          Please, open the console and click in the buttons.
         </p>
         <p>
           <button onClick={this.handleCombined} >Combined</button>
