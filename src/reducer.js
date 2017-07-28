@@ -21,7 +21,7 @@ const initalStateRequest = {
     playlistByArtist: [],
     playlistByGenre: [],
     playlistByCity: [],
-    byID = {},
+    byID: {},
     filteredBy: {
         state: {},
         genre: {}
@@ -31,47 +31,33 @@ const initalStateRequest = {
 function getInitialFakeState() {
     let state = {...initalStateRequest};
     for(let i = 0; i < 100; i++){
-        byID[i] = {id: i, name: "Nome fake " + i, idade: i+i}
+        state.byID[i] = {id: i, name: "Nome fake " + i, idade: i+i}
     }
     for(let i = 0; i < 20; i++){
         state.filteredBy.genre["genre-" + i] = [1, 2, 3, 4, 5, 7, 8 ,9, 10]
         state.filteredBy.state["state-" + i] = [1, 2, 3, 4, 5]
     }
+    return state
 }
 
 /**
  * Combined
  * -------------------------
  */
-export function reducerCombined(state = getInitialFakeState, action){
+export function reducerCombined(state = getInitialFakeState(), action){
     switch(action.type){
         case receive:
-            const IDs = []
-            const Items = action.data.map(item => {
+            const IDs = [], Items = {}
+            action.data.map(item => {
                 IDs.push(item.id)
-                return {
-                    [item.id]: item
-                }
+                Items[item.id] = item
             })
             switch(action.requestType){
                 case testUpdate:
                     return update(state, {
                         byID: {$merge: Items},
-                        filteredBy: {state: {[action.payload.genre]: {$set: IDs}}},
+                        filteredBy: {genre: {[action.payload.genre]: {$set: IDs}}},
                     });
-                case testActual:
-                    const genre = action.data
-                    const genre = action.payload.genre
-                    let byID = {...satate.byID}
-
-
-                    return {
-                        ...state,
-                        byID,
-                        filteredBy: {...state.filteredBy,
-                            [genre]: IDs
-                        }
-                    }
                 case playlistByArtist:
                     return {
                         ...state,
