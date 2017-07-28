@@ -1,39 +1,27 @@
 import { combineReducers } from 'redux'
 import update from 'immutability-helper';
 
-export const playlistByState = "playlistByState"
-export const playlistByArtist = "playlistByArtist"
-export const playlistByGenre = "playlistByGenre"
-export const playlistByCity = "playlistByCity"
 export const request = "request"
 export const receive = "receive"
 
-export const receiveState = "receiveState"
-export const receiveArtist = "receiveArtist"
-export const receiveGenre = "receiveGenre"
-export const receiveCity = "receiveCity"
-
-
 export const testUpdate = "test_update"
+export const oldUpdate = "old_update"
 
-const initalStateRequest = {
-    playlistByState: [],
-    playlistByArtist: [],
-    playlistByGenre: [],
-    playlistByCity: [],
-    byID: {},
-    filteredBy: {
-        state: {},
-        genre: {}
-    }
-}
-
+/**
+ * 500 Entities, 100 genres and states filters, with 5 to 10 ids each.
+ */
 function getInitialFakeState() {
-    let state = {...initalStateRequest};
-    for(let i = 0; i < 100; i++){
-        state.byID[i] = {id: i, name: "Nome fake " + i, idade: i+i}
+    let state = {
+        byID: {},
+        filteredBy: {
+            state: {},
+            genre: {}
+        }
+    };
+    for(let i = 0; i < 500; i++){
+        state.byID[i] = {id: i, name: "Fake Name " + i, idade: i+i}
     }
-    for(let i = 0; i < 20; i++){
+    for(let i = 0; i < 100; i++){
         state.filteredBy.genre["genre-" + i] = [1, 2, 3, 4, 5, 7, 8 ,9, 10]
         state.filteredBy.state["state-" + i] = [1, 2, 3, 4, 5]
     }
@@ -58,85 +46,25 @@ export function reducerCombined(state = getInitialFakeState(), action){
                         byID: {$merge: Items},
                         filteredBy: {genre: {[action.payload.genre]: {$set: IDs}}},
                     });
-                case playlistByArtist:
+                case oldUpdate:
                     return {
                         ...state,
-                        playlistByArtist: [...state.playlistByArtist, ...action.data]
+                        byID: {
+                            ...state.byID,
+                            ...Items,
+                        },
+                        filteredBy: {
+                            ...state.filteredBy,
+                            genre: {
+                                ...state.filteredBy.genre,
+                                [action.payload.genre]: IDs
+                            }
+                        }
                     }
-                case playlistByCity:
-                    return {
-                        ...state,
-                        playlistByCity: [...state.playlistByCity, ...action.data]
-                    }
-                case playlistByGenre:
-                    return {
-                        ...state,
-                        playlistByGenre: [...state.playlistByGenre, ...action.data]
-                    }
-                case playlistByState:
-                    return {
-                        ...state,
-                        playlistByState: [...state.playlistByState, ...action.data]
-                    }
-                default:
-                    return state
             }
         case request:
-            // Atualizações de loading...
+            // Loading updates and more...
             break
-        default:
-            return state
-    }
-}
-
-
-/**
- * Fragmented
- * -------------------------
- */
-export const reducerFragmented  = combineReducers({
-      reducerPlaylistArtist,
-      reducerPlaylistCity,
-      reducerPlaylistGenre,
-      reducerPlaylistState
-})
-
-export function reducerPlaylistState(state = [], action){
-    switch(action.type){
-        case receiveState:
-            let customState = [...state, ...action.data]
-            return customState
-        // remove, muda posição, entre outros...
-        default:
-            return state
-    }
-}
-
-export function reducerPlaylistArtist(state = [], action){
-    switch(action.type){
-        case receiveArtist:
-            return [...state, ...action.data]
-        // remove, entre outros...
-        default:
-            return state
-    }
-}
-
-export function reducerPlaylistGenre(state = [], action){
-    switch(action.type){
-        case receiveGenre:
-            return [...state, ...action.data]
-        // remove, atualiza, entre outros...
-        default:
-            return state
-    }
-}
-
-export function reducerPlaylistCity(state = [], action){
-    switch(action.type){
-        case receiveCity:
-            return [...state, ...action.data]
-        // remove, atualiza, entre outros...
         default:
             return state
     }
